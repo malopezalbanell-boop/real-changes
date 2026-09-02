@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Real Changes</title>
+<style>
+:root{--bg:#080b10;--panel:#10151b;--panel2:#151b22;--text:#f5f7f8;--muted:#9aa5b1;--green:#52df78;--line:#242c35;--purple:#7958e8}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.app{display:flex;min-height:100vh}.sidebar{width:245px;flex:none;background:#0b0f14;border-right:1px solid var(--line);padding:24px 16px;display:flex;flex-direction:column}
+.logo{font-weight:900;letter-spacing:2px;font-size:21px;padding:4px 12px 30px}.logo span{color:var(--green)}
+nav button{width:100%;border:0;background:none;color:#cbd2da;text-align:left;padding:13px 14px;border-radius:12px;margin:3px 0;font-size:15px}nav button:hover,nav button.active{background:#14241d;color:var(--green)}
+.premium{margin-top:auto;border:1px solid #245b37;background:#101d16;border-radius:15px;padding:15px;color:#cbd5ce;font-size:13px}.premium b{color:var(--green)}
+.main{flex:1;min-width:0;padding:28px 34px;overflow:auto}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}.top h1{margin:0;font-size:28px}.top p{margin:5px 0 0;color:var(--muted)}
+.avatar{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:#343a43;font-weight:800}
+.dashboard{display:grid;grid-template-columns:minmax(500px,1fr) 285px;gap:22px}.hero{height:340px;border:1px solid var(--line);border-radius:23px;padding:40px 48px;position:relative;overflow:hidden;background:radial-gradient(circle at 80% 30%,#26362e 0,#111820 42%,#10151b 70%)}.hero:after{content:"";position:absolute;right:-80px;bottom:-130px;width:520px;height:360px;background:linear-gradient(145deg,transparent 15%,#1c3328 16%,#0e1915 58%,transparent 59%);transform:rotate(-4deg);opacity:.8}.hero>*{position:relative;z-index:2}.hero h2{font-size:43px;max-width:650px;margin:0 0 10px}.hero .green{color:var(--green)}.hero p{color:#c1c9d0;max-width:600px;line-height:1.6}.actions{display:flex;gap:12px;margin-top:25px}.primary,.secondary{border-radius:11px;padding:12px 20px;font-weight:800;border:1px solid var(--line)}.primary{background:var(--green);color:#061009;border-color:var(--green)}.secondary{background:transparent;color:white}
+.sidecards{display:flex;flex-direction:column;gap:16px}.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px}.summary{min-height:220px}.summary .circle{width:85px;height:85px;border-radius:50%;border:9px solid #25312a;border-top-color:var(--green);display:grid;place-items:center;font-size:20px;font-weight:800;margin:10px auto 16px}.muted{color:var(--muted)}.coach{background:linear-gradient(150deg,#151229,#171225);}.coach .primary{background:#6844d8;border-color:#7657e8;color:white;width:100%;margin-top:15px}
+.section-title{display:flex;justify-content:space-between;align-items:center;margin:25px 0 13px}.section-title h2{margin:0;font-size:19px}.section-title span{color:var(--green);font-size:14px}
+.goals{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}.goal{min-height:135px}.goal .ico{font-size:25px}.goal h3{margin:12px 0 4px}.goal p{margin:0;color:var(--muted);font-size:13px;line-height:1.4}.goal button{float:right;border:0;background:#1b2c23;color:var(--green);border-radius:50%;width:29px;height:29px}
+.features{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid var(--line);margin-top:28px;padding-top:22px}.feature{padding:0 22px;border-right:1px solid var(--line)}.feature:first-child{padding-left:0}.feature:last-child{border:0}.feature h3{margin:5px 0}.feature p{color:var(--muted);font-size:13px;line-height:1.45}
+.section{display:none}.section.active{display:block}.form{max-width:800px}.form label{display:block;margin:16px 0 7px;font-weight:700}.form input,.form textarea,.form select{width:100%;background:#10151b;border:1px solid var(--line);color:white;padding:13px;border-radius:10px}.form textarea{min-height:110px}
+.progress{height:9px;background:#20272e;border-radius:10px;overflow:hidden}.bar{height:100%;width:64%;background:var(--green)}
+/* new styles for chat, community, habit cards */
+.chat-area{display:flex;flex-direction:column;gap:12px;margin-top:12px}
+.msg{max-width:80%;padding:10px 12px;border-radius:12px}
+.msg.user{background:#1d6133;margin-left:auto}
+.msg.ai{background:#17142b;border:1px solid #2c254e}
+.habit-card{display:flex;flex-direction:column;gap:8px}
+.community-post{display:flex;flex-direction:column;gap:8px;border-bottom:1px solid var(--line);padding:12px 0}
+.post-actions{display:flex;gap:8px;align-items:center}
+.small{font-size:13px;color:var(--muted)}
+.btn-ghost{background:transparent;border:1px solid var(--line);padding:6px 10px;border-radius:8px;color:var(--text)}
+.inspo-media{max-width:100%;border-radius:8px;margin-top:8px}
+.flex-row{display:flex;gap:12px;align-items:center}
+.meta{color:var(--muted);font-size:13px}
+@media(max-width:1050px){.dashboard{grid-template-columns:1fr}.sidecards{display:grid;grid-template-columns:1fr 1fr}.goals{grid-template-columns:repeat(2,1fr)}.features{grid-template-columns:repeat(2,1fr);gap:20px}.feature{border:0;padding:0}}
+@media(max-width:760px){.sidebar{display:none}.main{padding:20px}.hero{height:auto;padding:28px}.hero h2{font-size:32px}.sidecards,.goals,.features{grid-template-columns:1fr}.top h1{font-size:23px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+<div class="logo"><span>R</span> REAL<br>CHANGES</div>
+<nav>
+<button class="active" onclick="show('home',this)">⌂ &nbsp; Inicio</button>
+<button onclick="show('goalsPage',this)">◎ &nbsp; Objetivos</button>
+<button onclick="show('habits',this)">▣ &nbsp; Mis hábitos</button>
+<button onclick="show('plan',this)">▣ &nbsp; Plan personal</button>
+<button onclick="show('daily',this)">□ &nbsp; Registro diario</button>
+<button onclick="show('coach',this)">◌ &nbsp; Coach IA</button>
+<button onclick="show('community',this)">♺ &nbsp; Comunidad</button>
+<button onclick="show('inspo',this)">✦ &nbsp; Inspírate</button>
+<button onclick="show('progress',this)">▥ &nbsp; Progreso</button>
+<button onclick="show('profile',this)">♙ &nbsp; Perfil</button>
+</nav>
+<div class="premium"><b>✦ Hazte Premium</b><p>Desbloqueá funciones avanzadas y llevá tu cambio al siguiente nivel.</p><button class="primary">Ver Premium</button></div>
+</aside>
+
+<main class="main">
+<!-- Home -->
+<section id="home" class="section active">
+<div class="top"><div><h1>Hola 👋</h1><p>¿Qué querés mejorar hoy?</p></div><div class="avatar">M</div></div>
+<div class="dashboard">
+<div>
+<div class="hero"><h2>REAL <span class="green">CHANGES</span></h2><p>Small steps. Real changes.<br>Creá hábitos, alcanzá tus objetivos y convertite en una mejor versión de vos mismo, paso a paso.</p><div class="actions"><button class="primary" onclick="show('habits')">Ver mis hábitos</button><button class="secondary" onclick="show('progress')">Ver mi progreso</button></div></div>
+<div class="section-title"><h2>Elegí en qué querés mejorar hoy</h2><span>Ver todo</span></div>
+<div class="goals">
+<div class="card goal"><div class="ico">🎯</div><h3>Objetivos</h3><p>Definí tus metas y trabajá paso a paso.</p><button onclick="openGoal()">→</button></div>
+<div class="card goal"><div class="ico">📚</div><h3>Estudio</h3><p>Mejorá tu enfoque y organización.</p><button onclick="openGoal('Estudio')">→</button></div>
+<div class="card goal"><div class="ico">🏃</div><h3>Actividad física</h3><p>Construí hábitos de movimiento.</p><button onclick="openGoal('Actividad física')">→</button></div>
+<div class="card goal"><div class="ico">🌙</div><h3>Sueño</h3><p>Mejorá tus rutinas de descanso.</p><button onclick="openGoal('Sueño')">→</button></div>
+<div class="card goal"><div class="ico">🧠</div><h3>Bienestar</h3><p>Cuidá tu bienestar y organización.</p><button onclick="openGoal('Bienestar')">→</button></div>
+<div class="card goal"><div class="ico">📱</div><h3>Uso del celular</h3><p>Reducí distracciones y ganá tiempo.</p><button onclick="openGoal('Uso del celular')">→</button></div>
+<div class="card goal"><div class="ico">🗓️</div><h3>Organización</h3><p>Organizá tu día de forma simple.</p><button onclick="openGoal('Organización')">→</button></div>
+<div class="card goal"><div class="ico">＋</div><h3>Personalizado</h3><p>Creá un objetivo totalmente tuyo.</p><button onclick="openGoal()">→</button></div>
+</div>
+<div class="features"><div class="feature"><h3>🎯 Planes personalizados</h3><p>Planes adaptados a tu realidad, no al revés.</p></div><div class="feature"><h3>🤖 IA que te entiende</h3><p>Analiza tu progreso y ayuda a ajustar tu plan.</p></div><div class="feature"><h3>📈 Progreso real</h3><p>Visualizá tus avances día a día.</p></div><div class="feature"><h3>🔒 Privacidad primero</h3><p>Tus datos deben estar protegidos y bajo tu control.</p></div></div>
+</div>
+<div class="sidecards">
+<div class="card summary"><h3>▣ Resumen del día</h3><div class="circle" id="circle">0%</div><b id="taskText">Empezá creando tu plan.</b><p class="muted">Completá tus acciones de hoy.</p><button class="primary" style="width:100%" onclick="show('plan')">Ir a mi plan</button></div>
+<div class="card coach"><h3>🤖 Coach IA <small style="color:#a98cff">BETA</small></h3><p>Un espacio para revisar tu día y pensar próximos pasos.</p><button class="primary" onclick="show('coach')">Abrir chat</button></div>
+<div class="card"><h3 style="color:var(--green)">"</h3><p>No se trata de ser perfecto, se trata de ser mejor que ayer.</p><p class="muted">— Real Changes</p></div>
+</div>
+</div>
+</section>
+
+<!-- Goals -->
+<section id="goalsPage" class="section"><div class="top"><div><h1>Mis objetivos</h1><p>Definí qué querés cambiar y por qué.</p></div></div><div class="card form"><label>¿Qué querés mejorar?</label><input id="g" placeholder="Ej.: organizar mejor mis estudios"><label>¿Cuál es tu objetivo?</label><textarea id="o" placeholder="Contame con tus palabras qué querés conseguir."></textarea><label>¿Cuánto tiempo tenés?</label><select id="t"><option>10–15 minutos</option><option>20–30 minutos</option><option>30–60 minutos</option><option>Depende del día</option></select><label>¿Qué cosas podés y no podés hacer?</label><textarea id="l" placeholder="Horarios, responsabilidades, dificultades, etc."></textarea><br><button class="primary" onclick="createPlan()">Crear plan con Real Changes IA</button></div></section>
+
+<!-- Habits manager -->
+<section id="habits" class="section">
+  <div class="top"><div><h1>Mis hábitos</h1><p>Gestioná, editá y abrí la IA específica por hábito.</p></div></div>
+  <div class="card form">
+    <label>Nombre del hábito</label>
+    <input id="habit-title" placeholder="Ej.: Estudio 25 minutos">
+    <label>Descripción / por qué</label>
+    <textarea id="habit-desc" placeholder="¿Qué querés lograr y por qué?"></textarea>
+    <label>Tiempo disponible (opcional)</label>
+    <input id="habit-time" placeholder="10–15 minutos">
+    <label>Limitaciones / notas</label>
+    <textarea id="habit-limits" placeholder="Horarios, responsabilidades, dificultades, etc."></textarea>
+    <div style="margin-top:12px;display:flex;gap:10px">
+      <button class="primary" onclick="saveHabit()">Guardar hábito</button>
+      <button class="btn-ghost" onclick="renderHabits()">Cancelar</button>
+    </div>
+  </div>
+
+  <div style="margin-top:16px" id="habitsList"></div>
+</section>
+
+<!-- Habit detail with IA -->
+<section id="habit" class="section">
+  <div class="top"><div><h1 id="habit-name">Hábito</h1><p id="habit-sub">Detalles</p></div></div>
+  <div class="card">
+    <div id="habitDetails" class="habit-card"></div>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button class="primary" id="btn-ai-suggest" onclick="askAiForHabit()">Solicitar mejora IA</button>
+      <button class="btn-ghost" id="btn-publish" onclick="publishHabitToCommunity()">Publicar en comunidad</button>
+      <button class="btn-ghost" onclick="show('habits',document.querySelector('nav button[onclick*=\"habits\"])')">Volver</button>
+    </div>
+    <div class="chat-area" id="habit-chat"></div>
+    <div style="display:flex;gap:10px;margin-top:12px">
+      <input id="habit-msg" style="flex:1;background:#10151b;border:1px solid var(--line);color:white;padding:13px;border-radius:10px" placeholder="Escribí una pregunta para la IA del hábito...">
+      <button class="primary" onclick="sendHabitMessage()">Enviar</button>
+    </div>
+  </div>
+</section>
+
+<!-- Plan -->
+<section id="plan" class="section"><div class="top"><div><h1>Plan personal</h1><p>Un plan flexible que puede adaptarse a tu día.</p></div></div><div class="card"><h2 id="pt">Todavía no tenés un plan</h2><p id="po" class="muted">Creá un objetivo para comenzar.</p><div class="progress"><div class="bar" id="pb" style="width:0%"></div></div><p><b id="pp">0%</b> de progreso</p><hr style="border-color:var(--line);border-width:1px 0 0"><h3>Próximo paso</h3><p id="next" class="muted">Definí una pequeña acción que puedas cumplir hoy.</p></div></section>
+
+<!-- Daily -->
+<section id="daily" class="section"><div class="top"><div><h1>Registro diario</h1><p>Contale a Real Changes cómo fue tu día.</p></div></div><div class="card form"><label>¿Qué hiciste hoy?</label><textarea id="day" placeholder="Contame lo más importante de tu día..."></textarea><label>¿Cómo te sentiste?</label><select id="mood"><option>Muy bien</option><option>Bien</option><option>Normal</option><option>Me costó bastante</option></select><label>¿Notaste algún cambio?</label><textarea id="change" placeholder="¿Qué funcionó? ¿Qué te costó? ¿Qué cambiarías mañana?"></textarea><button class="primary" onclick="saveDay()">Guardar revisión</button><p id="saved" class="muted"></p></div></section>
+
+<!-- Coach -->
+<section id="coach" class="section"><div class="top"><div><h1>Coach IA</h1><p>Tu espacio para revisar, reflexionar y ajustar.</p></div></div><div class="card"><div id="chat"><div class="card" style="background:#17142b;border-color:#2c254e">🤖 <b>Real Changes IA</b><p>Contame cómo te fue hoy. Esta versión de demostración muestra la experiencia; la IA real se conectará desde el backend.</p></div></div><div style="display:flex;gap:10px;margin-top:15px"><input id="msg" style="flex:1;background:#10151b;border:1px solid var(--line);color:white;padding:13px;border-radius:10px" placeholder="Escribí tu mensaje..."><button class="primary" onclick="chat()">Enviar</button></div></div></section>
+
+<!-- Community -->
+<section id="community" class="section">
+  <div class="top"><div><h1>Comunidad</h1><p>Publicá hábitos y copiá los que te inspiren. La popularidad crece con likes y usos.</p></div></div>
+  <div class="card">
+    <h3>Tablón de hábitos</h3>
+    <div id="communityList" style="margin-top:12px"></div>
+    <p class="muted" style="margin-top:12px">Nota: En esta demo todo está en tu dispositivo (localStorage). En producción el contenido debe estar en backend y moderado.</p>
+  </div>
+</section>
+
+<!-- Inspo -->
+<section id="inspo" class="section">
+  <div class="top"><div><h1>Inspírate</h1><p>Un tablón con frases, videos e imágenes motivacionales.</p></div></div>
+  <div class="card form">
+    <label>Tipo</label>
+    <select id="inspo-type"><option value="text">Frase / Texto</option><option value="video">Video (YouTube link)</option><option value="image">Imagen (url)</option></select>
+    <label>Contenido</label>
+    <textarea id="inspo-content" placeholder="Escribí la frase o pegá el link"></textarea>
+    <div style="margin-top:12px;display:flex;gap:10px"><button class="primary" onclick="postInspo()">Publicar</button><button class="btn-ghost" onclick="renderInspo()">Cancelar</button></div>
+  </div>
+  <div style="margin-top:16px" id="inspoList"></div>
+</section>
+
+<!-- Progress -->
+<section id="progress" class="section"><div class="top"><div><h1>Progreso</h1><p>Mirá tu constancia y tus cambios.</p></div></div><div class="card"><h2>Tu progreso actual</h2><div class="progress"><div class="bar" id="pb2" style="width:0%"></div></div><h2 id="pct2">0%</h2><p class="muted">La versión completa podrá mostrar estadísticas semanales y mensuales.</p></div></section>
+
+<!-- Profile -->
+<section id="profile" class="section"><div class="top"><div><h1>Perfil</h1><p>Configurá tu experiencia en Real Changes.</p></div></div><div class="card"><h2>Mi perfil</h2><p class="muted">En la versión completa podrás administrar tus preferencias, privacidad y datos personales.</p></div></section>
+</main></div>
+
+<script>
+/* --- Utilities and storage keys --- */
+const STORAGE_HABITS = 'rcHabits_v1';
+const STORAGE_COMMUNITY = 'rcCommunity_v1';
+const STORAGE_INSPO = 'rcInspo_v1';
+
+function uid(){return Date.now().toString(36) + Math.random().toString(36).slice(2,7)}
+
+/* --- Navigation --- */
+function show(id,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if(btn){document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));btn.classList.add('active')}
+  // render dynamic content when showing sections
+  if(id === 'habits') renderHabits();
+  if(id === 'community') renderCommunity();
+  if(id === 'inspo') renderInspo();
+}
+
+/* --- Plan / goals existing functions --- */
+function openGoal(type=''){show('goalsPage');if(type)document.getElementById('g').value=type}
+function createPlan(){let g=document.getElementById('g').value||'Mi objetivo';let o=document.getElementById('o').value||'Mejorar poco a poco y mantener la constancia.';localStorage.setItem('rc',JSON.stringify({g,o}));document.getElementById('pt').textContent=g;document.getElementById('po').textContent='Objetivo: '+o;document.getElementById('next').textContent='Empezá con una acción pequeña y realista hoy.';show('plan')}
+function saveDay(){localStorage.setItem('rcDay',document.getElementById('day').value);document.getElementById('saved').textContent='✓ Revisión guardada en este dispositivo.';document.getElementById('pb').style.width='15%';document.getElementById('pb2').style.width='15%';document.getElementById('pp').textContent='15%';document.getElementById('pct2').textContent='15%';document.getElementById('circle').textContent='15%';}
+function chat(){let i=document.getElementById('msg'),v=i.value.trim();if(!v)return;let c=document.getElementById('chat');c.innerHTML+=`<div style="margin:12px 0 12px auto;background:#1d6133;padding:12px;border-radius:12px;max-width:80%">${v}</div><div class="card" style="background:#17142b;border-color:#2c254e"><b>Real Changes IA</b><p>Gracias por contármelo. Podemos identificar qué funcionó, qué fue difícil y elegir un cambio pequeño para probar mañana.</p></div>`;i.value=''}
+
+/* --- Habits: save/list/open with IA per habit --- */
+function getHabits(){return JSON.parse(localStorage.getItem(STORAGE_HABITS)||'[]')}
+function setHabits(h){localStorage.setItem(STORAGE_HABITS,JSON.stringify(h))}
+
+function saveHabit(){
+  const title = document.getElementById('habit-title').value.trim();
+  if(!title){alert('Pone un nombre al hábito'); return;}
+  const desc = document.getElementById('habit-desc').value.trim();
+  const time = document.getElementById('habit-time').value.trim();
+  const limits = document.getElementById('habit-limits').value.trim();
+  const h = getHabits();
+  const newH = {id: uid(), title, desc, time, limits, progress:0, createdAt: new Date().toISOString()}
+  h.unshift(newH);
+  setHabits(h);
+  // clear form
+  document.getElementById('habit-title').value='';document.getElementById('habit-desc').value='';document.getElementById('habit-time').value='';document.getElementById('habit-limits').value='';
+  renderHabits();
+  show('habits', document.querySelector('nav button[onclick*="habits"]'));
+}
+
+function renderHabits(){
+  const list = getHabits();
+  const container = document.getElementById('habitsList');
+  if(!container) return;
+  container.innerHTML = '';
+  if(list.length === 0){
+    container.innerHTML = `<div class="card"><p class="muted">No tenés hábitos todavía. Creá el primero arriba.</p></div>`;
+    return;
+  }
+  list.forEach(h=>{
+    const div = document.createElement('div');
+    div.className = 'card habit-card';
+    div.style.marginBottom = '12px';
+    div.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center">
+      <div><strong>${escapeHtml(h.title)}</strong><div class="meta">${h.time || ''} · ${new Date(h.createdAt).toLocaleDateString()}</div></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-ghost" onclick="openHabit('${h.id}')">Abrir</button>
+        <button class="btn-ghost" onclick="deleteHabit('${h.id}')">Eliminar</button>
+      </div>
+      </div>
+      <div class="small">${escapeHtml(h.desc || '')}</div>
+    `;
+    container.appendChild(div);
+  })
+}
+
+function deleteHabit(id){
+  if(!confirm('Eliminar hábito?')) return;
+  const list = getHabits().filter(h=>h.id!==id);
+  setHabits(list);
+  renderHabits();
+}
+
+/* --- Habit detail and AI --- */
+let currentHabitId = null;
+function openHabit(id){
+  const h = getHabits().find(x=>x.id===id);
+  if(!h) return alert('Hábito no encontrado');
+  currentHabitId = id;
+  document.getElementById('habit-name').textContent = h.title;
+  document.getElementById('habit-sub').textContent = h.time ? `${h.time} · creado ${new Date(h.createdAt).toLocaleDateString()}` : `creado ${new Date(h.createdAt).toLocaleDateString()}`;
+  const details = document.getElementById('habitDetails');
+  details.innerHTML = `<div><b>Descripción</b><div class="small">${escapeHtml(h.desc||'')}</div></div>
+  <div><b>Limitaciones</b><div class="small">${escapeHtml(h.limits||'')}</div></div>
+  <div><b>Progreso</b><div style="width:100%;background:#20272e;border-radius:8px;height:10px;margin-top:6px"><div style="height:100%;width:${h.progress || 0}%;background:var(--green);border-radius:8px"></div></div><div class="small">${h.progress || 0}% completado</div></div>`;
+  // chat area initial assistant message with an actionable plan
+  const chat = document.getElementById('habit-chat');
+  chat.innerHTML = '';
+  appendAiMessage(`Hola! Soy la IA para "${h.title}". Puedo sugerirte pequeños ajustes, pasos concretos y cómo adaptar el plan a tus limitaciones. Pulse "Solicitar mejora IA" o escribí una pregunta.`);
+  show('habit', document.querySelector('nav button[onclick*="habits"]'));
+}
+
+// append messages in habit chat
+function appendUserMessage(text){
+  const chat = document.getElementById('habit-chat');
+  const div = document.createElement('div'); div.className='msg user'; div.innerHTML = escapeHtml(text);
+  chat.appendChild(div); chat.scrollTop = chat.scrollHeight;
+}
+function appendAiMessage(html){ // html allowed (we escape in simple cases)
+  const chat = document.getElementById('habit-chat');
+  const div = document.createElement('div'); div.className='card msg ai'; div.style.background='#17142b';
+  div.innerHTML = html;
+  chat.appendChild(div); chat.scrollTop = chat.scrollHeight;
+}
+
+async function sendHabitMessage(){
+  const input = document.getElementById('habit-msg');
+  const text = input.value.trim(); if(!text) return;
+  appendUserMessage(text);
+  input.value='';
+  await runAiForCurrentHabit(text);
+}
+
+async function askAiForHabit(){
+  // ask AI to propose improvements for the current habit
+  const h = getHabits().find(x=>x.id===currentHabitId);
+  if(!h) return alert('Abrí un hábito primero');
+  appendUserMessage('Por favor, dame mejoras y ajustes para este hábito.');
+  await runAiForCurrentHabit('Mejoras y ajustes');
+}
+
+async function runAiForCurrentHabit(userPrompt){
+  const h = getHabits().find(x=>x.id===currentHabitId);
+  if(!h){ appendAiMessage('No se encontró el hábito.'); return; }
+  // try to call backend AI (placeholder). If 404/not available, use local generator.
+  try{
+    // Replace '/api/ai' with your real backend endpoint.
+    const resp = await fetch('/api/ai', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({habit: h, prompt: userPrompt})
+    });
+    if(resp.ok){
+      const data = await resp.json();
+      const text = data.suggestions || data.text || JSON.stringify(data);
+      appendAiMessage(formatSuggestions(text));
+      return;
+    }
+    // if backend returns non-OK, fallback
+  }catch(e){
+    // network error or no backend
+  }
+  // fallback local (simple heuristic)
+  const local = generateLocalSuggestions(h, userPrompt);
+  appendAiMessage(formatSuggestions(local));
+}
+
+/* Simple local suggestion generator (demo). */
+function generateLocalSuggestions(habit, prompt){
+  const suggestions = [];
+  suggestions.push(`Objetivo claro: ${habit.title}`);
+  if(habit.desc) suggestions.push(`¿Por qué?: ${habit.desc}`);
+  // micro-tareas
+  suggestions.push('Micro-pasos sugeridos:');
+  suggestions.push('- Paso 1: Define un periodo corto (p. ej. 15 minutos) y siéntate a trabajar solo en esto.');
+  suggestions.push('- Paso 2: Rompe la tarea en 1 o 2 subtareas concretas (ej.: leer 1 capítulo, resolver 3 ejercicios).');
+  suggestions.push('- Paso 3: Agenda el mismo horario 3 días seguidos para crear hábito.');
+  if(habit.limits) suggestions.push(`Ajustes por limitaciones: ${habit.limits}`);
+  suggestions.push('Consejos de motivación: celebra lo pequeño y anota 1 logro diario.');
+  suggestions.push('Si querés, podés publicar este hábito en la Comuniad para que otros lo usen.');
+  return suggestions.join('\n');
+}
+
+function formatSuggestions(text){
+  // simple formatting: convert newlines to <div>
+  const safe = escapeHtml(String(text));
+  return safe.replace(/\n/g,'<br>');
+}
+
+/* --- Publishing to community --- */
+function getCommunity(){return JSON.parse(localStorage.getItem(STORAGE_COMMUNITY)||'[]')}
+function setCommunity(l){localStorage.setItem(STORAGE_COMMUNITY,JSON.stringify(l))}
+
+function publishHabitToCommunity(){
+  const h = getHabits().find(x=>x.id===currentHabitId);
+  if(!h) return alert('Abrí un hábito para publicarlo');
+  const community = getCommunity();
+  const post = {
+    id: uid(),
+    habitId: h.id,
+    title: h.title,
+    desc: h.desc,
+    time: h.time,
+    likes: 0,
+    uses: 0,
+    createdAt: new Date().toISOString(),
+    author: 'anon' // placeholder — add auth to track author
+  };
+  community.unshift(post);
+  setCommunity(community);
+  alert('Hábito publicado en la Comunidad!');
+  renderCommunity();
+}
+
+function renderCommunity(){
+  const list = getCommunity();
+  const container = document.getElementById('communityList');
+  container.innerHTML = '';
+  if(list.length === 0){
+    container.innerHTML = `<div class="muted">No hay publicaciones todavía. Publicá un hábito desde la vista del hábito.</div>`;
+    return;
+  }
+  list.forEach(p=>{
+    const div = document.createElement('div'); div.className = 'community-post';
+    div.innerHTML = `<div style="display:flex;justify-content:space-between">
+      <div><strong>${escapeHtml(p.title)}</strong><div class="small">${escapeHtml(p.desc||'')}</div></div>
+      <div class="meta small">${p.likes} ♥ · ${p.uses} ✅<div class="small">${new Date(p.createdAt).toLocaleString()}</div></div>
+    </div>
+    <div class="post-actions">
+      <button class="btn-ghost" onclick="likePost('${p.id}')">♥ Me gusta</button>
+      <button class="primary" onclick="adoptPost('${p.id}')">Adoptar hábito (usar)</button>
+      <button class="btn-ghost" onclick="viewCommunityHabit('${p.id}')">Abrir</button>
+    </div>`;
+    container.appendChild(div);
+  })
+}
+
+function likePost(id){
+  const list = getCommunity();
+  const p = list.find(x=>x.id===id); if(!p) return;
+  p.likes = (p.likes||0) + 1;
+  setCommunity(list);
+  renderCommunity();
+}
+
+function adoptPost(id){
+  const list = getCommunity();
+  const p = list.find(x=>x.id===id); if(!p) return;
+  // copy habit to user's habits
+  const habit = { id: uid(), title: p.title, desc: p.desc, time: p.time, limits:'', progress:0, createdAt: new Date().toISOString()};
+  const h = getHabits(); h.unshift(habit); setHabits(h);
+  // increment uses count
+  p.uses = (p.uses||0) + 1; setCommunity(list);
+  alert('Hábito adoptado y guardado en "Mis hábitos"');
+  renderHabits();
+  renderCommunity();
+}
+
+function viewCommunityHabit(id){
+  const p = getCommunity().find(x=>x.id===id);
+  if(!p) return;
+  // create a temporary view in habit detail style
+  currentHabitId = null; // not one of user's habits
+  document.getElementById('habit-name').textContent = p.title;
+  document.getElementById('habit-sub').textContent = `Publicado por ${p.author} · ${new Date(p.createdAt).toLocaleDateString()}`;
+  const details = document.getElementById('habitDetails');
+  details.innerHTML = `<div><b>Descripción</b><div class="small">${escapeHtml(p.desc||'')}</div></div>
+  <div><b>Progreso</b><div class="small">Publicación de la comunidad</div></div>`;
+  const chat = document.getElementById('habit-chat'); chat.innerHTML = '';
+  appendAiMessage('Este hábito fue publicado por la comunidad. Podés adoptarlo o pedir a la IA ideas para adaptarlo a tu situación.');
+  // show habit section
+  show('habit', document.querySelector('nav button[onclick*="community"]'));
+}
+
+/* --- Inspo tab --- */
+function getInspo(){return JSON.parse(localStorage.getItem(STORAGE_INSPO)||'[]')}
+function setInspo(v){localStorage.setItem(STORAGE_INSPO,JSON.stringify(v))}
+function postInspo(){
+  const type = document.getElementById('inspo-type').value;
+  const content = document.getElementById('inspo-content').value.trim();
+  if(!content) return alert('Agregá contenido');
+  const p = {id: uid(), type, content, likes:0, createdAt: new Date().toISOString(), author:'anon'};
+  const list = getInspo(); list.unshift(p); setInspo(list);
+  document.getElementById('inspo-content').value='';
+  renderInspo();
+}
+
+function renderInspo(){
+  const list = getInspo();
+  const container = document.getElementById('inspoList'); container.innerHTML='';
+  if(list.length===0){ container.innerHTML = `<div class="card"><p class="muted">Todavía no hay publicaciones. Inspirate y publicá algo!</p></div>`; return; }
+  list.forEach(p=>{
+    const div = document.createElement('div'); div.className='card'; div.style.marginBottom='10px';
+    let media = '';
+    if(p.type==='video' && isYouTubeLink(p.content)){
+      const id = extractYouTubeId(p.content);
+      media = `<iframe class="inspo-media" width="560" height="315" src="https://www.youtube.com/embed/${id}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+    } else if(p.type==='image'){
+      media = `<img class="inspo-media" src="${escapeAttr(p.content)}" alt="imagen inspiracional">`;
+    } else {
+      media = `<div class="small" style="white-space:pre-wrap">${escapeHtml(p.content)}</div>`;
+    }
+    div.innerHTML = `<div style="display:flex;justify-content:space-between"><strong>${p.type === 'text' ? 'Frase' : (p.type==='video'?'Video':'Imagen')}</strong><div class="meta small">${p.likes} ♥ · ${new Date(p.createdAt).toLocaleDateString()}</div></div>
+    ${media}
+    <div style="display:flex;gap:8px;margin-top:8px"><button class="btn-ghost" onclick="likeInspo('${p.id}')">♥ Me gusta</button><button class="btn-ghost" onclick="saveInspo('${p.id}')">Guardar</button></div>`;
+    container.appendChild(div);
+  })
+}
+
+function likeInspo(id){const l=getInspo();const p=l.find(x=>x.id===id);p.likes=(p.likes||0)+1;setInspo(l);renderInspo();}
+function saveInspo(id){alert('En esta demo se puede implementar "guardar" en el backend. Aquí podrías añadirlo a tus favoritos.');}
+
+/* --- Helpers --- */
+function escapeHtml(s){ if(!s) return ''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
+function escapeAttr(s){ return String(s).replace(/"/g,'&quot;').replace(/'/g,"&#39;") }
+function isYouTubeLink(u){ return /youtube\.com|youtu\.be/.test(u) }
+function extractYouTubeId(url){
+  const m = url.match(/(?:v=|\/)([0-9A-Za-z_-]{6,11})/); return m ? m[1] : '';
+}
+
+/* --- On load: restore plan/habits --- */
+let p = localStorage.getItem('rc'); if(p){let x=JSON.parse(p);document.getElementById('pt').textContent=x.g;document.getElementById('po').textContent='Objetivo: '+x.o}
+
+renderHabits();
+renderCommunity();
+renderInspo();
+
+/* --- Small UX: allow pressing Enter on habit msg to send --- */
+document.getElementById('habit-msg').addEventListener('keydown', function(e){ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendHabitMessage(); } });
+
+/* --- Simple demo to show popularity growth effect: add function to seed sample community content (comment out if undesired) --- */
+/*
+(function seedDemo(){
+  if(getCommunity().length===0){
+    setCommunity([{
+      id: uid(), habitId: null, title:'Método Pomodoro 25/5', desc:'25 minutos enfocado + 5 descanso. Ideal para estudio.', time:'25 minutos', likes: 12, uses: 34, createdAt: new Date().toISOString(), author:'usuario1'
+    }])
+  }
+})();
+*/
+</script>
+</body></html>
